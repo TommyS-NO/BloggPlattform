@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const port = 3000; // Portnummeret som serveren skal kjøre på
+const port = 3000;
 
 // CORS-konfigurasjon
 const corsOptions = {
@@ -14,18 +14,11 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Importer ruter
+// Importer og monter ruter
 const userRoutes = require('./Routes/userRoute').router;
 const postRoutes = require('./Routes/postRoute');
-
-// Mount ruter
 app.use('/', userRoutes);
 app.use('/', postRoutes);
-
-// Enkel rute for å bekrefte at serveren kjører
-// app.get('/', (req, res) => {
-//     res.send('Serveren FUNGERER ');
-// });
 
 // Start serveren
 app.listen(port, () => {

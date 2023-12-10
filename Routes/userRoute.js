@@ -34,8 +34,11 @@ router.post('/login', (req, res) => {
         if (user) {
             bcrypt.compare(password, user.password, (err, result) => {
                 if (result) {
-                    const token = jwt.sign({ id: user.id }, secretKey, { expiresIn: '2h' });
-                    res.json({ token: token });  // Sender token i responsens kropp
+                    const token = jwt.sign({ username: username }, secretKey, { expiresIn: '2h' });
+
+                    // Setter token som en cookie som er tilgjengelig for JavaScript på klienten
+                    res.cookie('token', token, { httpOnly: false, secure: false, maxAge: 7200000 });
+                    res.json({ token: token });  // Sender også token i responsens kropp
                 } else {
                     res.status(401).send('Feil passord');
                 }
@@ -47,6 +50,7 @@ router.post('/login', (req, res) => {
 });
 
 router.get('/logout', (req, res) => {
+    res.clearCookie('token');
     res.status(200).send('Bruker logget ut');
 });
 
@@ -58,10 +62,10 @@ const verifyToken = (req, res, next) => {
     try {
         const decoded = jwt.verify(token, secretKey);
         req.user = decoded;
+        next();
     } catch (err) {
         return res.status(401).send('Ugyldig token');
     }
-    return next();
 };
 
 module.exports = { router, verifyToken };
