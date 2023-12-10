@@ -1,6 +1,6 @@
 const express = require('express');
 const db = require('../Db/Db');
-const { verifyToken } = require('./userRoute');
+const { authenticateToken } = require('./userRoute');
 const router = express.Router();
 
 // Hent alle blogginnlegg
@@ -34,11 +34,11 @@ router.get('/posts/:id', (req, res) => {
 });
 
 // Opprett et nytt blogginnlegg
-router.post('/posts', verifyToken, (req, res) => {
+router.post('/posts', authenticateToken, (req, res) => {
     const { title, content } = req.body;
     const username = req.user.username;
 
-    db.get(`SELECT id FROM users WHERE username = ?`, username, (error, user) => {
+    db.get(`SELECT id FROM users WHERE username = ?`, [username], (error, user) => {
         if (error) {
             res.status(500).json({ message: 'Feil ved oppretting av innlegg', error: error.message });
             return;
@@ -59,18 +59,18 @@ router.post('/posts', verifyToken, (req, res) => {
 });
 
 // Oppdater et blogginnlegg
-router.put('/posts/:id', verifyToken, (req, res) => {
+router.put('/posts/:id', authenticateToken, (req, res) => {
     const { id } = req.params;
     const { title, content } = req.body;
     const username = req.user.username;
 
-    db.get(`SELECT userId FROM posts WHERE id = ?`, id, (error, post) => {
+    db.get(`SELECT userId FROM posts WHERE id = ?`, [id], (error, post) => {
         if (error) {
             res.status(500).json({ message: 'Feil ved oppdatering av innlegg', error: error.message });
             return;
         }
         if (post) {
-            db.get(`SELECT id FROM users WHERE username = ?`, username, (userError, user) => {
+            db.get(`SELECT id FROM users WHERE username = ?`, [username], (userError, user) => {
                 if (userError) {
                     res.status(500).json({ message: 'Feil ved oppdatering av innlegg', error: userError.message });
                     return;
@@ -95,17 +95,17 @@ router.put('/posts/:id', verifyToken, (req, res) => {
 });
 
 // Slett et blogginnlegg
-router.delete('/posts/:id', verifyToken, (req, res) => {
+router.delete('/posts/:id', authenticateToken, (req, res) => {
     const { id } = req.params;
     const username = req.user.username;
 
-    db.get(`SELECT userId FROM posts WHERE id = ?`, id, (error, post) => {
+    db.get(`SELECT userId FROM posts WHERE id = ?`, [id], (error, post) => {
         if (error) {
             res.status(500).json({ message: 'Feil ved sletting av innlegg', error: error.message });
             return;
         }
         if (post) {
-            db.get(`SELECT id FROM users WHERE username = ?`, username, (userError, user) => {
+            db.get(`SELECT id FROM users WHERE username = ?`, [username], (userError, user) => {
                 if (userError) {
                     res.status(500).json({ message: 'Feil ved sletting av innlegg', error: userError.message });
                     return;

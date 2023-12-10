@@ -7,6 +7,7 @@ const router = express.Router();
 const saltRounds = 10;
 const secretKey = 'gokstadakademiet';
 
+// Register a new user
 router.post('/register', async (req, res) => {
     const { username, password, email } = req.body;
     try {
@@ -14,58 +15,64 @@ router.post('/register', async (req, res) => {
         const sql = `INSERT INTO users (username, password, email, dateCreated) VALUES (?, ?, ?, datetime('now'))`;
         db.run(sql, [username, hashedPassword, email], function (error) {
             if (error) {
-                res.status(500).send('Kunne ikke registrere bruker');
-                return;
+                res.status(500).json({ message: 'Kunne ikke registrere bruker', error: error.message });
+            } else {
+                res.status(200).json({ message: 'Bruker registrert', userId: this.lastID });
             }
-            res.status(200).send('Bruker registrert');
         });
     } catch (error) {
-        res.status(500).send('Serverfeil ved registrering');
+        res.status(500).json({ message: 'Serverfeil ved registrering', error: error.message });
     }
 });
 
+// User login
 router.post('/login', (req, res) => {
     const { username, password } = req.body;
-    db.get(`SELECT * FROM users WHERE username = ?`, [username], (error, user) => {
+    db.get(`SELECT * FROM users WHERE username = ?`, [username], async (error, user) => {
         if (error) {
-            res.status(500).send('Feil ved innlogging');
+            res.status(500).json({ message: 'Feil ved innlogging', error: error.message });
             return;
         }
         if (user) {
-            bcrypt.compare(password, user.password, (err, result) => {
-                if (result) {
-                    const token = jwt.sign({ username: username }, secretKey, { expiresIn: '2h' });
+            const match = await bcrypt.compare(password, user.password);
+            if (match) {
+                const token = jwt.sign({ username: username }, secretKey, { expiresIn: '1h' });
 
-                    // Setter token som en cookie som er tilgjengelig for JavaScript på klienten
-                    res.cookie('token', token, { httpOnly: false, secure: false, maxAge: 7200000 });
-                    res.json({ token: token });  // Sender også token i responsens kropp
-                } else {
-                    res.status(401).send('Feil passord');
-                }
-            });
+                // Send token as a cookie
+                res.cookie('token', token, { httpOnly: false, secure: false, maxAge: 3600000 });
+
+                // Also send token in the response body
+                res.json({ message: "Innlogging vellykket!", token: token });
+            } else {
+                res.status(401).json({ message: 'Feil passord' });
+            }
         } else {
-            res.status(404).send('Bruker ikke funnet');
+            res.status(404).json({ message: 'Bruker ikke funnet' });
         }
     });
 });
 
-router.get('/logout', (req, res) => {
-    res.clearCookie('token');
-    res.status(200).send('Bruker logget ut');
-});
-
-const verifyToken = (req, res, next) => {
-    const token = req.headers['authorization'];
+// Middleware to verify token
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers["authorization"];
+    if (!authHeader) {
+      return res.status(401).json({ error: "Access denied. No token provided." });
+    }
+  
+    const [bearer, token] = authHeader.split(' ');
     if (!token) {
-        return res.status(403).send('En token kreves for autentisering');
+      return res.status(401).json({ error: "Access denied. No token provided." });
     }
-    try {
-        const decoded = jwt.verify(token, secretKey);
-        req.user = decoded;
-        next();
-    } catch (err) {
-        return res.status(401).send('Ugyldig token');
-    }
-};
+  
+    jwt.verify(token, secretKey, (err, user) => {
+      if (err) {
+        return res.status(403).json({ error: "Invalid token." });
+      }
+      req.user = user;
+      next();
+    });
+  }
+  
 
-module.exports = { router, verifyToken };
+
+module.exports = { router, authenticateToken };
