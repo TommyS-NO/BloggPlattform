@@ -1,13 +1,31 @@
+//-------------------------//
+//     Module Imports     //
+//-----------------------//
+
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../Db/Db');
 const router = express.Router();
 
+//-------------------------//
+//     Salt Rounds for    //
+//     Password Hashing  //
+//----------------------//
+
 const saltRounds = 10;
+
+//-------------------------//
+//     Secret Key for     //
+//     JWT Token         //
+//----------------------//
+
 const secretKey = 'gokstadakademiet';
 
-// Register a new user
+//-------------------------//
+//     User Registration  //
+//-----------------------//
+
 router.post('/register', async (req, res) => {
     const { username, password, email } = req.body;
     try {
@@ -25,7 +43,10 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// User login
+//-------------------------//
+//     User Login         //
+//-----------------------//
+
 router.post('/login', (req, res) => {
     const { username, password } = req.body;
     db.get(`SELECT * FROM users WHERE username = ?`, [username], async (error, user) => {
@@ -38,10 +59,7 @@ router.post('/login', (req, res) => {
             if (match) {
                 const token = jwt.sign({ username: username }, secretKey, { expiresIn: '1h' });
 
-                // Send token as a cookie
                 res.cookie('token', token, { httpOnly: false, secure: false, maxAge: 3600000 });
-
-                // Also send token in the response body
                 res.json({ message: "Innlogging vellykket!", token: token });
             } else {
                 res.status(401).json({ message: 'Feil passord' });
@@ -51,15 +69,18 @@ router.post('/login', (req, res) => {
         }
     });
 });
+//-------------------------//
+//     Token Verification //
+//     Middleware         //
+//-----------------------//
 
-// Middleware to verify token
 function authenticateToken(req, res, next) {
     const authHeader = req.headers["authorization"];
     if (!authHeader) {
       return res.status(401).json({ error: "Access denied. No token provided." });
     }
   
-    const [bearer, token] = authHeader.split(' ');
+    const [token] = authHeader.split(' ');
     if (!token) {
       return res.status(401).json({ error: "Access denied. No token provided." });
     }
@@ -73,6 +94,8 @@ function authenticateToken(req, res, next) {
     });
   }
   
-
+//-------------------------//
+//     Module Export      //
+//-----------------------//
 
 module.exports = { router, authenticateToken };

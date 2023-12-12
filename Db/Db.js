@@ -1,10 +1,21 @@
+//-------------------------//
+//     Module Imports     //
+//-----------------------//
+
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 
-// Definer filbane til databasen
-const dbPath = path.join(__dirname, "database.db");
+//-------------------------//
+//     Datbase Filepath   //
+//-----------------------//
 
-// Oppretter en ny SQLite-database
+const dbPath = path.join(__dirname, "database.db");  
+
+//--------------------------//
+//     Create SQLite Db    //
+//------------------------//
+
+
 const db = new sqlite3.Database(dbPath, (error) => {
     if (error) {
         console.error("Error opening database", error.message);
@@ -14,9 +25,17 @@ const db = new sqlite3.Database(dbPath, (error) => {
     }
 });
 
-// Funksjon for å opprette Users og Posts tabellene
+//--------------------------//
+//     Create Tables       //
+//     User and Posts     //
+//-----------------------//
+
 function createTables() {
-    // Opprett users-tabellen
+
+//-------------------------//
+//     user Table         //
+//-----------------------//
+
     db.run(`CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL UNIQUE,
@@ -31,7 +50,10 @@ function createTables() {
         }
     });
 
-    // Opprett posts-tabellen
+//-------------------------//
+//     posts Table        //
+//-----------------------//
+
     db.run(`CREATE TABLE IF NOT EXISTS posts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         userId INTEGER NOT NULL,
@@ -47,5 +69,9 @@ function createTables() {
         }
     });
 }
+
+//-------------------------//
+//     Module Export      //
+//-----------------------//
 
 module.exports = db;

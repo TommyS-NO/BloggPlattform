@@ -1,9 +1,16 @@
+//-------------------------//
+//     Module Imports     //
+//-----------------------//
+
 const express = require('express');
 const db = require('../Db/Db');
 const { authenticateToken } = require('./userRoute');
 const router = express.Router();
 
-// Hent alle blogginnlegg
+//-------------------------//
+//     Fetch All Posts    //
+//-----------------------//
+
 router.get('/posts', (req, res) => {
     db.all(`SELECT posts.id, title, content, datePosted, users.username 
             FROM posts JOIN users ON posts.userId = users.id`, (error, posts) => {
@@ -15,7 +22,10 @@ router.get('/posts', (req, res) => {
     });
 });
 
-// Hent et spesifikt blogginnlegg ved ID
+//-------------------------//
+// Fetch Post by ID       //
+//-----------------------//
+
 router.get('/posts/:id', (req, res) => {
     const { id } = req.params;
     db.get(`SELECT posts.id, title, content, datePosted, users.username 
@@ -33,7 +43,10 @@ router.get('/posts/:id', (req, res) => {
     });
 });
 
-// Opprett et nytt blogginnlegg
+//-------------------------//
+//    Create New Post     //
+//-----------------------//
+
 router.post('/posts', authenticateToken, (req, res) => {
     const { title, content } = req.body;
     const username = req.user.username;
@@ -58,7 +71,10 @@ router.post('/posts', authenticateToken, (req, res) => {
     });
 });
 
-// Oppdater et blogginnlegg
+//-------------------------//
+//    Update a Post       //
+//-----------------------//
+
 router.put('/posts/:id', authenticateToken, (req, res) => {
     const { id } = req.params;
     const { title, content } = req.body;
@@ -94,7 +110,10 @@ router.put('/posts/:id', authenticateToken, (req, res) => {
     });
 });
 
-// Slett et blogginnlegg
+//-------------------------//
+//    Delete a Post       //
+//-----------------------//
+
 router.delete('/posts/:id', authenticateToken, (req, res) => {
     const { id } = req.params;
     const username = req.user.username;
@@ -128,5 +147,9 @@ router.delete('/posts/:id', authenticateToken, (req, res) => {
         }
     });
 });
+
+//-------------------------//
+//    Module Export       //
+//-----------------------//
 
 module.exports = router;
