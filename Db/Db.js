@@ -31,8 +31,8 @@ const db = new sqlite3.Database(dbPath, (error) => {
 //-----------------------//
 
 function createTables() {
-//     user Table         //
 
+//     user Table         //
 db.run(`CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL UNIQUE,
@@ -46,9 +46,7 @@ db.run(`CREATE TABLE IF NOT EXISTS users (
         console.log("Users table created or already exists.");
     }
 });
-
 //     posts Table        //
-
 db.run(`CREATE TABLE IF NOT EXISTS posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     userId INTEGER NOT NULL,
