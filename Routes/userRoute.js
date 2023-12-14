@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const db = require('../Db/Db');
 const router = express.Router();
 
+
 //-------------------------//
 //     Salt Rounds for    //
 //     Password Hashing  //
@@ -43,6 +44,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
+
 //-------------------------//
 //     User Login         //
 //-----------------------//
@@ -69,6 +71,7 @@ router.post('/login', (req, res) => {
         }
     });
 });
+
 //-------------------------//
 //     Token Verification //
 //     Middleware         //
@@ -80,7 +83,7 @@ function authenticateToken(req, res, next) {
       return res.status(401).json({ error: "Access denied. No token provided." });
     }
   
-    const [token] = authHeader.split(' ');
+    const [bearer, token] = authHeader.split(' ');
     if (!token) {
       return res.status(401).json({ error: "Access denied. No token provided." });
     }
