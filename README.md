@@ -60,7 +60,7 @@ Autentiserte brukere kan opprette blogginnlegg. Hver post knyttes til brukeren s
 
 ### Lese Innlegg
 
-Alle besøkende til plattformen kan lese innlegg. Innlegg kan hentes både individuelt ved ID og som en liste over alle tilgjengelige innlegg.
+Alle besøkende til siden kan lese innlegg. Innlegg kan hentes både individuelt ved ID og som en liste over alle tilgjengelige innlegg.
 
 ### Oppdatere og Slette Innlegg
 
@@ -111,9 +111,6 @@ For å teste API-endepunkter via Postman, kan du bruke følgende tabell som refe
 | `/posts`        | POST   | Oppretter et nytt innlegg        | Ja                   |
 | `/posts/:id`    | PUT    | Oppdaterer et innlegg            | Ja                   |
 | `/posts/:id`    | DELETE | Sletter et innlegg               | Ja                   |
-
-### Eksempel på Testing av Endepunkter i Postman
-
 
 ### Eksempel på Testing av Endepunkter i Postman
 
@@ -168,7 +165,15 @@ For å teste API-endepunkter via Postman, kan du bruke følgende tabell som refe
 -- Mulige årsaker:
 - Cookies og Sesjonsstyring: Problemer med hvordan cookies håndteres mellom faner eller vinduer.
 - Exstensions: Mulige problemer med installerte utvidelser i nettleser.
-- Frontend Logikk: Sjekke hvordan frontend håndterer autentiseringsstatus.
+
+### Problem ved brukerregistrering
+
+-- Feilen: Ingen varsel vises på siden ved forsøk på brukerregistrering, selv om feilmeldinger kort vises i konsoll-loggen.
+
+-- Observasjoner:
+  - Feilmeldinger generert under registreringsprosessen blir logget til konsollen, men forsvinner raskt og gir ikke brukeren tilstrekkelig tid til å lese dem.
+  - Manglende varig visuell tilbakemelding til brukeren på nettsiden, til tross for at serveren sender en passende respons.
+
 
 ## App Arkitektur
 
@@ -222,7 +227,7 @@ _Refleksjon over hvordan arbeidet kunne blitt forbedret med veiledning._
 
 - MVC-inspirert Struktur: Prosjektet implementerer en struktur som er inspirert av MVC (Model-View-Controller) arkitekturen.
   Selv om det ikke er en streng MVC-implementasjon, reflekterer organiseringen av ruter (som fungerer som controllere)
-  og databaselogikk (som modell) en klar separasjon av ansvarsområder. Denne tilnærmingen forbedrer modulariteten og gjør koden mer vedlikeholdbar,
+  og databaselogikk (som modell) en klar separasjon av ansvarsområder. Denne tilnærmingen gjør koden mer vedlikeholdbar,
   samtidig som det opprettholder en effektiv organisering av dataflyt og brukergrensesnittlogikk.
 
 - ### For mer informasjon om `MVC`, [Understanding MVC Architecture in Node.js]

@@ -29,20 +29,36 @@ const secretKey = 'gokstadakademiet';
 
 router.post('/register', async (req, res) => {
     const { username, password, email } = req.body;
-    try {
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-        const sql = `INSERT INTO users (username, password, email, dateCreated) VALUES (?, ?, ?, datetime('now'))`;
-        db.run(sql, [username, hashedPassword, email], function (error) {
-            if (error) {
-                res.status(500).json({ message: 'Kunne ikke registrere bruker', error: error.message });
-            } else {
-                res.status(200).json({ message: 'Bruker registrert', userId: this.lastID });
-            }
-        });
-    } catch (error) {
-        res.status(500).json({ message: 'Serverfeil ved registrering', error: error.message });
-    }
+
+    
+    const userExistsQuery = `SELECT id FROM users WHERE username = ? OR email = ?`;
+    db.get(userExistsQuery, [username, email], async (userError, existingUser) => {
+        if (userError) {
+            res.status(500).json({ message: 'Feil ved sjekking av bruker', error: userError.message });
+            return;
+        }
+
+        if (existingUser) {
+            res.status(409).json({ message: 'Brukernavn eller e-post allerede i bruk' });
+            return;
+        }
+
+        try {
+            const hashedPassword = await bcrypt.hash(password, saltRounds);
+            const insertUserQuery = `INSERT INTO users (username, password, email, dateCreated) VALUES (?, ?, ?, datetime('now'))`;
+            db.run(insertUserQuery, [username, hashedPassword, email], function (insertError) {
+                if (insertError) {
+                    res.status(500).json({ message: 'Kunne ikke registrere bruker', error: insertError.message });
+                } else {
+                    res.status(200).json({ message: 'Bruker registrert', username: username });
+                }
+            });
+        } catch (error) {
+            res.status(500).json({ message: 'Serverfeil ved registrering', error: error.message });
+        }
+    });
 });
+
 
 
 //-------------------------//
