@@ -22,11 +22,12 @@ document.addEventListener("DOMContentLoaded", () => {
 					.map(
 						(post) => `
                             <div class="post" data-id="${post.id}">
-                                <h2>${post.title}</h2>
-                                <p>${post.content}</p>
+                                <h2 contenteditable="false">${post.title}</h2>
+                                <p contenteditable="false">${post.content}</p>
                                 <small>By: ${post.username} on ${post.datePosted}</small>
-                                <button class="edit-post">Edit</button>
-                                <button class="delete-post">Delete</button>
+                                <button class="edit-post"><i class="fas fa-edit"></i></button>
+                                <button class="delete-post"><i class="fas fa-trash"></i></button>
+                                <button class="save-post" style="display:none;"><i class="fas fa-save"></i></button>
                             </div>
                         `,
 					)
@@ -39,7 +40,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				const editButtons = document.querySelectorAll(".edit-post");
 				for (const button of editButtons) {
-					button.addEventListener("click", editPost);
+					button.addEventListener("click", enableEditPost);
+				}
+
+				const saveButtons = document.querySelectorAll(".save-post");
+				for (const button of saveButtons) {
+					button.addEventListener("click", savePost);
 				}
 			} else {
 				console.error("Error fetching posts:", posts.message);
@@ -80,28 +86,38 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	});
 
-	const editPost = async (e) => {
-		const postId = e.target.closest(".post").dataset.id;
-		const token = localStorage.getItem("token");
-		const title = prompt("Enter new title:");
-		const content = prompt("Enter new content:");
+	const enableEditPost = (e) => {
+		const postElement = e.target.closest(".post");
+		postElement.querySelector("h2").contentEditable = true;
+		postElement.querySelector("p").contentEditable = true;
+		postElement.querySelector("h2").classList.add("editable");
+		postElement.querySelector("p").classList.add("editable");
+		postElement.querySelector(".edit-post").style.display = "none";
+		postElement.querySelector(".delete-post").style.display = "none";
+		postElement.querySelector(".save-post").style.display = "inline-block";
+	};
 
-		if (title && content) {
-			try {
-				const response = await fetch(`${apiBaseUrl}/posts/${postId}`, {
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`,
-					},
-					body: JSON.stringify({ title, content }),
-				});
-				const data = await response.json();
-				alert(data.message);
-				fetchUserPosts();
-			} catch (error) {
-				console.error("Error editing post:", error);
-			}
+	const savePost = async (e) => {
+		const postElement = e.target.closest(".post");
+		const postId = postElement.dataset.id;
+		const token = localStorage.getItem("token");
+		const title = postElement.querySelector("h2").textContent;
+		const content = postElement.querySelector("p").textContent;
+
+		try {
+			const response = await fetch(`${apiBaseUrl}/posts/${postId}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify({ title, content }),
+			});
+			const data = await response.json();
+			alert(data.message);
+			fetchUserPosts();
+		} catch (error) {
+			console.error("Error editing post:", error);
 		}
 	};
 

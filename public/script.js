@@ -8,12 +8,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			const postsContainer = document.getElementById("posts");
 
 			postsContainer.innerHTML = posts
+				.sort((a, b) => new Date(b.datePosted) - new Date(a.datePosted))
 				.map(
 					(post) => `
                 <div class="post" data-id="${post.id}">
                     <h2>${post.title}</h2>
                     <p>${post.content}</p>
-                    <small>By: ${post.username} on ${post.datePosted}</small>
+                    <small>By: ${post.username} on ${new Date(
+											post.datePosted,
+										).toLocaleString()}</small>
                     ${
 											localStorage.getItem("username") === post.username
 												? '<button class="delete-post">Delete</button>'
@@ -33,7 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	};
 
-	// Register new user
 	document
 		.getElementById("register-form")
 		.addEventListener("submit", async (e) => {
@@ -60,7 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		});
 
-	// Log in existing user
 	document
 		.getElementById("login-form")
 		.addEventListener("submit", async (e) => {
@@ -91,7 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		});
 
-	// Show/hide forms based on button clicks
 	document.getElementById("register-link").addEventListener("click", (e) => {
 		e.preventDefault();
 		document.getElementById("register-container").style.display = "block";
@@ -104,7 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		document.getElementById("login-container").style.display = "block";
 	});
 
-	// Close modal
 	const modal = document.getElementById("auth-modal");
 	const closeButton = document.querySelector(".close-button");
 
@@ -118,7 +117,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	});
 
-	// Add event listener for search functionality
 	document.getElementById("search-input").addEventListener("input", (event) => {
 		const searchTerm = event.target.value.toLowerCase();
 		const posts = document.querySelectorAll(".post");
@@ -132,6 +130,5 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	});
 
-	// Fetch posts on page load
 	fetchPosts();
 });
