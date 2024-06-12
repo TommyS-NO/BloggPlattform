@@ -81,9 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					localStorage.setItem("token", data.token);
 					localStorage.setItem("username", username);
 					document.getElementById("auth-modal").style.display = "none";
-					document.getElementById("post-container").style.display = "block";
-					document.getElementById("logout-button").style.display = "block";
-					fetchPosts();
+					window.location.href = "userSite.html";
 					document.getElementById("login-form").reset();
 				} else {
 					alert(data.message);
@@ -92,63 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				console.error("Error logging in:", error);
 			}
 		});
-
-	// Log out user
-	document.getElementById("logout-button").addEventListener("click", () => {
-		localStorage.removeItem("token");
-		localStorage.removeItem("username");
-		document.getElementById("auth-modal").style.display = "flex";
-		document.getElementById("login-container").style.display = "none";
-		document.getElementById("post-container").style.display = "none";
-		document.getElementById("logout-button").style.display = "none";
-		document.getElementById("posts").innerHTML = "";
-	});
-
-	// Create new post
-	document.getElementById("post-form").addEventListener("submit", async (e) => {
-		e.preventDefault();
-		const title = document.getElementById("post-title").value;
-		const content = document.getElementById("post-content").value;
-		const token = localStorage.getItem("token");
-
-		try {
-			const response = await fetch(`${apiBaseUrl}/posts`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${token}`,
-				},
-				body: JSON.stringify({ title, content }),
-			});
-			const data = await response.json();
-			alert(data.message);
-			fetchPosts();
-			document.getElementById("post-form").reset();
-		} catch (error) {
-			console.error("Error creating post:", error);
-		}
-	});
-
-	// Delete a post
-	const deletePost = async (e) => {
-		const postId = e.target.closest(".post").dataset.id;
-		const token = localStorage.getItem("token");
-
-		try {
-			const response = await fetch(`${apiBaseUrl}/posts/${postId}`, {
-				method: "DELETE",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${token}`,
-				},
-			});
-			const data = await response.json();
-			alert(data.message);
-			fetchPosts();
-		} catch (error) {
-			console.error("Error deleting post:", error);
-		}
-	};
 
 	// Show/hide forms based on button clicks
 	document.getElementById("register-link").addEventListener("click", (e) => {
