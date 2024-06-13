@@ -11,20 +11,21 @@
     <header>
         <h1>BloggPlattform</h1>
         <nav>
-            <button id="logout-button">Logout</button>
+            <button id="delete-user-button" class="danger-button">Slett Bruker</button>
+            <button id="logout-button">Logg ut</button>
         </nav>
     </header>
     <main>
-        <div id="post-container">
-            <h2>Create Post</h2>
+        <div class="form-container">
+            <h2>Opprett innlegg</h2>
             <form id="post-form">
-                <input type="text" id="post-title" placeholder="Title" required>
-                <textarea id="post-content" placeholder="Content" required></textarea>
-                <button type="submit">Create Post</button>
+                <input type="text" id="post-title" placeholder="Tittel" required>
+                <textarea id="post-content" placeholder="Innhold" required></textarea>
+                <button type="submit">Opprett innlegg</button>
             </form>
         </div>
-        <div id="posts-container">
-            <h2>Your Blog Posts</h2>
+        <div class="posts-container">
+            <h2>Dine innlegg</h2>
             <div id="posts"></div>
         </div>
     </main>

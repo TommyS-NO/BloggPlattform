@@ -19,10 +19,9 @@ const postRoutes = require("./Routes/postRoute");
 app.use("/", userRoutes);
 app.use("/", postRoutes);
 
-// Serve static files from the 'public' folder
 app.use(express.static(path.join(__dirname, "public")));
 
-// Serve index.html on the root URL
+
 app.get("/", (req, res) => {
 	res.sendFile(path.join(__dirname, "public", "index.html"));
 });

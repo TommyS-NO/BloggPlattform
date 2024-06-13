@@ -105,5 +105,33 @@ const authenticateToken = (req, res, next) => {
 		next();
 	});
 };
+router.delete("/delete-user", authenticateToken, (req, res) => {
+	const { username } = req.user;
+
+
+	const deletePostsQuery =
+		"DELETE FROM posts WHERE userId = (SELECT id FROM users WHERE username = ?)";
+	db.run(deletePostsQuery, [username], (deletePostsError) => {
+		if (deletePostsError) {
+			return res.status(500).json({
+				message: "Feil ved sletting av brukerens innlegg",
+				error: deletePostsError.message,
+			});
+		}
+
+
+		const deleteUserQuery = "DELETE FROM users WHERE username = ?";
+		db.run(deleteUserQuery, [username], (deleteUserError) => {
+			if (deleteUserError) {
+				return res.status(500).json({
+					message: "Feil ved sletting av bruker",
+					error: deleteUserError.message,
+				});
+			}
+
+			res.json({ message: "Bruker og tilhørende innlegg er slettet." });
+		});
+	});
+});
 
 module.exports = { router, authenticateToken };

@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
 	const apiBaseUrl = "http://localhost:3000";
-	let likesData = {};
+	const likesData = {};
 
 	const fetchPosts = async () => {
 		try {
@@ -19,7 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
 											post.datePosted,
 										).toLocaleString()}</small>
                     <div class="like-container">
-                        <small>Likes: <span class="like-count">${likesData[post.id] || 0}</span></small>
+                        <small>Likes: <span class="like-count">${
+													likesData[post.id] || 0
+												}</span></small>
                         <button class="like-post" data-id="${post.id}">
                             <span>Like</span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
   <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.32-.158-.888.283-.95l4.898-.696L7.538.792c.197-.4.73-.4.927 0l2.184 4.327 4.898.696c.441.062.612.63.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
@@ -82,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				alert(data.message);
 				if (data.message === "Bruker registrert") {
 					document.getElementById("register-form").reset();
-					// Log the user in after successful registration
+
 					const loginResponse = await fetch(`${apiBaseUrl}/login`, {
 						method: "POST",
 						headers: {
@@ -122,7 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
 					body: JSON.stringify({ username, password }),
 				});
 				const data = await response.json();
-				console.log("Login response:", data); // Debugging line
 				if (data.token) {
 					localStorage.setItem("token", data.token);
 					localStorage.setItem("username", username);

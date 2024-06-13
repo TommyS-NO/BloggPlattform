@@ -1,10 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
 	const apiBaseUrl = "http://localhost:3000";
 
-	const fetchUserPosts = async () => {
-		const token = localStorage.getItem("token");
-		const username = localStorage.getItem("username");
 
+	const token = localStorage.getItem("token");
+	const username = localStorage.getItem("username");
+
+	if (!token || !username) {
+		window.location.href = "index.html";
+	}
+
+	const fetchUserPosts = async () => {
 		try {
 			const response = await fetch(`${apiBaseUrl}/posts`, {
 				method: "GET",
@@ -66,7 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		e.preventDefault();
 		const title = document.getElementById("post-title").value;
 		const content = document.getElementById("post-content").value;
-		const token = localStorage.getItem("token");
 
 		try {
 			const response = await fetch(`${apiBaseUrl}/posts`, {
@@ -78,7 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				body: JSON.stringify({ title, content }),
 			});
 			const data = await response.json();
-			alert(data.message);
 			fetchUserPosts();
 			document.getElementById("post-form").reset();
 		} catch (error) {
@@ -100,7 +103,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	const savePost = async (e) => {
 		const postElement = e.target.closest(".post");
 		const postId = postElement.dataset.id;
-		const token = localStorage.getItem("token");
 		const title = postElement.querySelector("h2").textContent;
 		const content = postElement.querySelector("p").textContent;
 
@@ -114,7 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				body: JSON.stringify({ title, content }),
 			});
 			const data = await response.json();
-			alert(data.message);
 			fetchUserPosts();
 		} catch (error) {
 			console.error("Error editing post:", error);
@@ -123,7 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	const deletePost = async (e) => {
 		const postId = e.target.closest(".post").dataset.id;
-		const token = localStorage.getItem("token");
 
 		try {
 			const response = await fetch(`${apiBaseUrl}/posts/${postId}`, {
@@ -134,12 +134,41 @@ document.addEventListener("DOMContentLoaded", () => {
 				},
 			});
 			const data = await response.json();
-			alert(data.message);
 			fetchUserPosts();
 		} catch (error) {
 			console.error("Error deleting post:", error);
 		}
 	};
+
+	document
+		.getElementById("delete-user-button")
+		.addEventListener("click", async () => {
+			const confirmation = confirm(
+				"Er du sikker på at du vil slette kontoen din?",
+			);
+			if (confirmation) {
+				try {
+					const response = await fetch(`${apiBaseUrl}/delete-user`, {
+						method: "DELETE",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${token}`,
+						},
+					});
+					const data = await response.json();
+					if (response.ok) {
+						alert("Kontoen din har blitt slettet.");
+						localStorage.removeItem("token");
+						localStorage.removeItem("username");
+						window.location.href = "index.html";
+					} else {
+						console.error("Error deleting user:", data.message);
+					}
+				} catch (error) {
+					console.error("Error deleting user:", error);
+				}
+			}
+		});
 
 	fetchUserPosts();
 });

@@ -2,13 +2,14 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background: conic-gradient(from 180deg at 50% 50%, #f5f7fa, #c3cfe2, #f5f7fa, #c3cfe2);
 }
 
 header {
-    background: #333;
-    color: #fff;
+    background: conic-gradient(#e6e9bf, #d2b5aa, #cbaea3, #d4b5ab, #e6e9bf, #d2b5aa, #cbaea3, #d4b5ab, #e6e9bf, #d2b5aa, #cbaea3, #d4b5ab, #e6e9bf, #d2b5aa, #cbaea3, #d4b5ab);
+    color: #080808;
     text-align: center;
+    height: 65px;
     padding: 1rem 0;
     display: flex;
     justify-content: center;
@@ -29,7 +30,8 @@ nav {
 
 nav button {
     padding: 0.5rem 1rem;
-    background-color: #ff9800;
+    margin-left: 10px;
+   background-color: #333;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -37,17 +39,28 @@ nav button {
 }
 
 nav button:hover {
-    background-color: #e68900;
+background-color: #555;
+}
+
+nav .danger-button {
+    background-color: #e53935;
+}
+
+nav .danger-button:hover {
+    background-color: #d32f2f;
 }
 
 main {
+    display: flex;
+    justify-content: space-around;
     margin: 2rem auto;
     width: 90%;
-    max-width: 800px;
-    background: #fff;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+}
+
+.form-container,
+.posts-container {
+    width: 45%;
 }
 
 h1, h2 {
@@ -81,38 +94,62 @@ button:hover {
     background-color: #555;
 }
 
-#posts-container {
-    margin-top: 2rem;
-}
-
 .post {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     padding: 1rem;
     border: 1px solid #ccc;
     border-radius: 4px;
-    background: #f9f9f9;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .post h2,
 .post p {
-    margin: 0;
-    padding: 0.5rem;
-    border-radius: 4px;
+    margin: 0 0 0.5rem 0;
+}
+
+.post small {
+    color: #555;
 }
 
 .post .edit-post,
 .post .delete-post {
-    margin-left: 0.5rem;
     cursor: pointer;
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 1.2rem;
 }
 
 .post .edit-post:hover,
 .post .delete-post:hover {
-    color: #555;
+    color: #000;
 }
 
-.post h2.editable,
-.post p.editable {
-    border: 1px solid #000;
-    background: #f4f4f4;
+.post .save-post {
+    display: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.post .save-post:hover {
+    color: #000;
+}
+
+.editable {
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+footer {
+    text-align: center;
+    padding: 1rem 0;
+    background: conic-gradient(#e6e9bf, #d2b5aa, #cbaea3, #d4b5ab, #e6e9bf, #d2b5aa, #cbaea3, #d4b5ab, #e6e9bf, #d2b5aa, #cbaea3, #d4b5ab, #e6e9bf, #d2b5aa, #cbaea3, #d4b5ab);
+    color: #080808;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
 }
