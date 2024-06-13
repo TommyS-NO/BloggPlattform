@@ -92,7 +92,6 @@ The application uses an SQLite database to store and manage data. There are two 
 
 ## Screenshots
 
-Here are some screenshots of the application:
 
 <img src="./Assets/Preview_1.png" alt="Preview 1" width="200"/>
 <img src="./Assets/Preview_2.png" alt="Preview 2" width="200"/>
